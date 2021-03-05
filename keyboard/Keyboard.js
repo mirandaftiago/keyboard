@@ -44,15 +44,13 @@ const Keyboard = {
       return `<i class="material-icons">${icon_name}</i>`;
     };
 
-    keysLayout.forEach(key => {
+    keyLayout.forEach(key => {
       const keyElement = document.createElement("button");
       const insertLineBreak = ["backspace", "p", "enter", "?"].indexOf(key) !== -1;
 
       //Add attributes / classes
       keyElement.setAttribute("type", "button");
       keyElement.classList.add("keyboard__key");
-
-    });
 
     switch (key) {
       case "backspace":
@@ -119,7 +117,16 @@ const Keyboard = {
         });
 
         break;
-    }
+      }
+
+      fragment.appendChild(keyElement);
+
+      if (insertLineBreak) {
+        fragment.appendChild(document.createElement("br"));
+      }
+    });
+
+    return fragment;
   },
 
   _triggerEvent(handlerName) {
