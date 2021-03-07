@@ -21,9 +21,11 @@ const Keyboard = {
     this.elements.keysContainer = document.createElement("div");
 
     //Setup main elements
-    this.elements.main.classList.add("keyboard", "1keyboard--hidden");
+    this.elements.main.classList.add("keyboard", "keyboard--hidden");
     this.elements.keysContainer.classList.add("keyboard__keys");
     this.elements.keysContainer.appendChild(this._createKeys());
+
+    this.elements.keys = this.elements.keysContainer.querySelectorAll(".keyboard__key");
 
     //Add to DOM
     this.elements.main.appendChild(this.elements.keysContainer);
@@ -70,7 +72,7 @@ const Keyboard = {
         keyElement.innerHTML = createIconHTML("keyboard_capslock");
 
         keyElement.addEventListener("click", () => {
-          this._toggleCapsLock;
+          this._toggleCapsLock();
           keyElement.classList.toggle("keyboard__key--active", this.properties.capsLock);
         });
 
@@ -131,22 +133,41 @@ const Keyboard = {
   },
 
   _triggerEvent(handlerName) {
-    console.log("Event triggered! Event name: " + handlerName);
+    if (typeof this.eventHandlers[handlerName] == "function") {
+      this.eventHandlers[handlerName](this.properties.value);
+    }
   },
 
   _toggleCapsLock() {
-    console.log("Caps Lock toggled");
+    this.properties.capsLock = !this.properties.capsLock;
+
+    for (const key of this.elements.keys) {
+      if (key.childElementCount === 0) {
+        key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
+      }
+    }
   },
 
   open(initialValue, oninput, onclose) {
-
+    this.properties.value = initialValue || "";
+    this.eventHandlers.oninput = oninput;
+    this.eventHandlers.onclose = onclose;
+    this.elements.main.classList.remove("keyboard--hidden");
   },
 
   close() {
-
+    this.value = "";
+    this.eventHandlers.oninput = oninput;
+    this.eventHandlers.onclose = onclose;
+    this.elements.main.classList.add("keyboard--hidden");
   }
 };
 
 window.addEventListener('DOMContentLoaded', function () {
   Keyboard.init();
+  Keyboard.open("key: ", function(currentValue) {
+    console.log("value changed! " + currentValue);
+  }, function (currentValue) {
+    console.log("keyboard closed! Finishing value: " + currentValue);
+  });
 })
