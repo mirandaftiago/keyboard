@@ -1,0 +1,7 @@
+body,textarea{
+  font-family: 'Oswald', sans-serif;
+}
+
+li {
+  list-style-type: "->";
+}
